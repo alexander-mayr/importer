@@ -10,7 +10,7 @@ import com.github.fridujo.rabbitmq.mock.MockConnectionFactory;
 
 public class WorkerTest {
    @Test
-   public void testdoWork() throws IOException, TimeoutException {
+   public void testdoWork() throws IOException, TimeoutException, InterruptedException {
 	   Worker worker = new Worker(new MockConnectionFactory());
 	   assertEquals(worker.setupQueues(new MockConnectionFactory()), true);
    }

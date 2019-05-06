@@ -28,6 +28,7 @@ public class Worker {
 		}
 
 		this.setupRedis();
+		System.out.println("Setup done.");
 	}
 
 	void setupRedis() {
@@ -37,7 +38,6 @@ public class Worker {
 			redis_host = "localhost";
 		}
 
-		System.out.println("Use redis: " + redis_host);
 		this.jedis = new Jedis(redis_host);		
 	}
 
@@ -60,11 +60,10 @@ public class Worker {
 			return false;
 		}
 
-		System.out.println("Setup done");
 		return true;
 	}
 
-	void setupQueues(ConnectionFactory factory) throws IOException, TimeoutException {
+	boolean setupQueues(ConnectionFactory factory) throws IOException, TimeoutException {
 		Connection connection;
 		connection = factory.newConnection();
 		Channel channel = connection.createChannel();
@@ -83,11 +82,11 @@ public class Worker {
 		channel.queueDeclare("messages-retry", true, false, false, retry_args);
 		channel.queueBind("messages-retry", "messages-retry", "");
 
+		return true;
 	}
 
 	public void run() throws IOException, TimeoutException {
 	    DeliverCallback callback = (consumerTag, delivery) -> {
-	    	System.out.println("STUFF");
 	    	String message = new String(delivery.getBody(), "UTF-8");
 	    	JSONObject json_object = new JSONObject(message);
 	    	Integer retry_count = 0;
