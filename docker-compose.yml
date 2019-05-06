@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  importservice:
+    build: importservice
+    image: importer/importservice
+    depends_on:
+      - redis
+      - broker
+    ports:
+      - 8080:8080
+    environment:
+      BROKER_HOST: broker
+
+  importworker:
+    build: importworker
+    image: importer/importworker
+    depends_on:
+      - redis
+      - broker
+    environment:
+      BROKER_HOST: broker
+      REDIS_HOST: redis
+
+  broker:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
